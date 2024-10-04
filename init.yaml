@@ -1,0 +1,25 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - nginx
+
+runcmd:
+  - systemctl start nginx
+  - systemctl enable nginx
+
+write_files:
+  - path: /var/www/html/index.html
+    content: |
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Welcome to Nginx!</title>
+      </head>
+      <body>
+        <h1>Hello from AWS!</h1>
+        <p>This Nginx server was automatically configured using cloud-init.</p>
+      </body>
+      </html>

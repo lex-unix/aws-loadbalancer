@@ -3,10 +3,25 @@ resource "aws_key_pair" "deployer" {
   public_key = file("~/.ssh/id_rsa.pub")
 }
 
-resource "aws_instance" "web1" {
+data "aws_ami" "ubuntu_nginx" {
+  owners      = ["self"]
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu-nginx"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+}
+
+resource "aws_instance" "web" {
   subnet_id              = aws_subnet.private1.id
-  vpc_security_group_ids = [aws_security_group.allow_http.id, aws_security_group.allow_ssh.id, aws_security_group.allow_ping.id]
-  ami                    = "ami-0866a3c8686eaeeba"
+  vpc_security_group_ids = [aws_security_group.allow_http.id, aws_security_group.allow_ssh.id]
+  ami                    = data.aws_ami.ubuntu_nginx.id
   instance_type          = "t2.micro"
   user_data              = file("init.yaml")
   key_name               = aws_key_pair.deployer.key_name
@@ -16,17 +31,16 @@ resource "aws_instance" "web1" {
     delete_on_termination = true
   }
   tags = {
-    Name = "web-1"
+    Name = "web"
   }
 }
 
 
 resource "aws_instance" "bastion" {
-  subnet_id              = aws_subnet.public1.id
-  vpc_security_group_ids = [aws_security_group.allow_http.id, aws_security_group.allow_ssh.id]
-
+  subnet_id                   = aws_subnet.public1.id
+  vpc_security_group_ids      = [aws_security_group.allow_ssh.id]
   associate_public_ip_address = true
-  ami                         = "ami-0866a3c8686eaeeba"
+  ami                         = data.aws_ami.ubuntu_nginx.id
   instance_type               = "t2.micro"
   user_data                   = file("init.yaml")
   key_name                    = aws_key_pair.deployer.key_name

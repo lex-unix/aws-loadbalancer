@@ -7,8 +7,9 @@ Create a VPC with four subnets in two AZs: one private and one public in each AZ
 Create three security groups to allow: HTTP, SSH, and ICMP (for `ping`) traffic. SSH and ICMP are not mandatory,
 and are used for debugging purposes only.
 
-Create two EC2 instances: a bastion host and a web application (base NGINX web server). The bastion host is not mandatory,
-and used for debugging purposes only. The bastion host is placed in public subnet, while the web application is in private.
+Create two EC2 instances: a bastion host and a web application (base NGINX web server).
+The bastion host is placed in public subnet, while the web application is in private. The bastion host is not mandatory,
+and used for debugging purposes only.
 
 Create a single target group “nginx” and attach the web application to it. Create one listener to forward HTTP traffic
 to the “nginx” target group. Finally, create the application load balancer itself and place it in two public subnets.

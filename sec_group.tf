@@ -50,6 +50,19 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http" {
   }
 }
 
+resource "aws_vpc_security_group_egress_rule" "allow_http" {
+  security_group_id = aws_security_group.allow_http.id
+  ip_protocol       = "tcp"
+  from_port         = 80
+  to_port           = 80
+  cidr_ipv4         = "0.0.0.0/0"
+
+  tags = {
+    Name = "allow-http-egress"
+  }
+}
+
+
 resource "aws_security_group" "allow_ping" {
   name   = "allow_ping"
   vpc_id = aws_vpc.main.id
